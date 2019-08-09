@@ -15,21 +15,23 @@ namespace Image_Ascii
         static string ASCIIChars = "`^\",:;Il!i~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
         static void Main(string[] args)
         {
-            string file = "C:\\Users\\ryuhyoko\\Source\\Repos\\Image Ascii\\Image Ascii\\ow.jpg";
+            string file = "C:\\Users\\ryuhyoko\\Source\\Repos\\Image Ascii\\Image Ascii\\OSP5BZ7QI3AF1558647405218.jpg";
             string ASCIIChars = "`^\",:;Il!i~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
             
-            Image image = Image.FromFile(file);
-            
-            Console.WriteLine("image width: {0}", image.Width);
-            Console.WriteLine("image height: {0}", image.Height);
+            Bitmap bmp = new Bitmap((Bitmap)Image.FromFile(file));
 
-            var ms = new MemoryStream();
-            image.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
-            byte[] photoByte = ms.ToArray();
+            Color[,] pixelMatrix = BmpTo2dArray(bmp);
+            //for (int i = 0; i < bmp.Height; i++)
+            //{
+            //    for (int j = 0; j < bmp.Width; j++)
+            //    {
+            //        Console.WriteLine(pixelMatrix[i, j].ToString());
+            //    }
+            //}
 
-            Color[,] pixelMatrix = To2dArray(photoByte, image.Width);
-            Console.WriteLine("height: {0}", photoByte.Length / image.Width/3);
-            Console.WriteLine("width: {0}", image.Width);
+            Console.WriteLine("image width: {0}", bmp.Width);
+            Console.WriteLine("image height: {0}", bmp.Height);
+                        
             int[,] brightnessMatrix = ConvertToBrightnessMatrix(pixelMatrix);
 
 
@@ -88,7 +90,25 @@ namespace Image_Ascii
             Console.WriteLine("Conversion to Brightness Matrix complete.");
             return result;
         }
+        static Color[,] BmpTo2dArray(Bitmap bmp)
 
+        {
+            int height = bmp.Height;
+            int width = bmp.Width;
+            Color[,] result = new Color[height, width];
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    int r = bmp.GetPixel(i, j).R;
+                    int g = bmp.GetPixel(i, j).G;
+                    int b = bmp.GetPixel(i, j).B;
+                    Color c = Color.FromArgb(r, g, b);
+                    result[j, i] = c;
+                }
+            }
+            return result;
+        }
         static Color[,] To2dArray(byte[] source, int width)
         {
             int height = source.Length / width/3;

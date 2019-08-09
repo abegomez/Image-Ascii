@@ -56,8 +56,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="black-square.jpg" />
+    <Content Include="one.bmp" />
+    <Content Include="one.jpg" />
     <Content Include="OSP5BZ7QI3AF1558647405218.jpg" />
     <Content Include="ow.jpg" />
+    <Content Include="quad.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
