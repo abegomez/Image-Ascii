@@ -15,35 +15,20 @@ namespace Image_Ascii
         static string ASCIIChars = "`^\",:;Il!i~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
         static void Main(string[] args)
         {
-            string file = "C:\\Users\\ryuhyoko\\Source\\Repos\\Image Ascii\\Image Ascii\\OSP5BZ7QI3AF1558647405218.jpg";
+            string file = "C:\\Users\\ryuhyoko\\Source\\Repos\\Image Ascii\\Image Ascii\\ow.jpg";
             string ASCIIChars = "`^\",:;Il!i~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
             
             Bitmap bmp = new Bitmap((Bitmap)Image.FromFile(file));
-
+            
             Color[,] pixelMatrix = BmpTo2dArray(bmp);
-            //for (int i = 0; i < bmp.Height; i++)
-            //{
-            //    for (int j = 0; j < bmp.Width; j++)
-            //    {
-            //        Console.WriteLine(pixelMatrix[i, j].ToString());
-            //    }
-            //}
-
+            
             Console.WriteLine("image width: {0}", bmp.Width);
             Console.WriteLine("image height: {0}", bmp.Height);
                         
             int[,] brightnessMatrix = ConvertToBrightnessMatrix(pixelMatrix);
 
-
             char[,] asciiMatrix = ConvertBrightnessToASCII(brightnessMatrix);
-            for (int i = 0; i < asciiMatrix.GetLength(0); i++)
-            {
-                for (int j = 0; j < asciiMatrix.GetLength(1); j++)
-                {
-                    Console.Write("{0}{0}{0}", asciiMatrix[i, j]);
-                }
-                Console.WriteLine();
-            }
+            PrintASCII(asciiMatrix);
             string val;
             Console.Write("Enter integer: ");
             val = Console.ReadLine();
@@ -55,6 +40,17 @@ namespace Image_Ascii
             return avg;
         }
 
+        static void PrintASCII(char[,] asciiMatrix)
+        {
+            for (int i = 0; i < asciiMatrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < asciiMatrix.GetLength(1); j++)
+                {
+                    Console.Write("{0}{0}{0}", asciiMatrix[i, j]);
+                }
+                Console.WriteLine();
+            }
+        }
 
         static  char[,] ConvertBrightnessToASCII(int[,] input)
         {
@@ -91,7 +87,6 @@ namespace Image_Ascii
             return result;
         }
         static Color[,] BmpTo2dArray(Bitmap bmp)
-
         {
             int height = bmp.Height;
             int width = bmp.Width;
