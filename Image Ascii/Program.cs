@@ -5,21 +5,33 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Forms;
 using ImageProcessor;
 using ImageProcessor.Imaging.Formats;
 
 namespace Image_Ascii
 {
-    class Program
+    static class Program
     {
         static string ASCIIChars = "`^\",:;Il!i~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
+        [STAThread]
         static void Main(string[] args)
         {
-            string file = "C:\\Users\\ryuhyoko\\Source\\Repos\\Image Ascii\\Image Ascii\\ow.jpg";
+            string file = "";
+            OpenFileDialog OFD = new OpenFileDialog();
+            OFD.Multiselect = false;
+            OFD.Title = "Open Excel Document";
+            OFD.Filter = "Image Document|*.bmp;*.jpg";
+            OFD.ShowDialog();
+            file= OFD.FileName;
+
+            //string file = "C:\\Users\\ryuhyoko\\Source\\Repos\\Image Ascii\\Image Ascii\\OSP5BZ7QI3AF1558647405218.jpg";
             string ASCIIChars = "`^\",:;Il!i~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
             
-            Bitmap bmp = new Bitmap((Bitmap)Image.FromFile(file));
-            
+            byte[] photoBytes = File.ReadAllBytes(file);
+
+            Bitmap bmp = ResizeBMP(photoBytes);
             Color[,] pixelMatrix = BmpTo2dArray(bmp);
             
             Console.WriteLine("image width: {0}", bmp.Width);
@@ -29,9 +41,31 @@ namespace Image_Ascii
 
             char[,] asciiMatrix = ConvertBrightnessToASCII(brightnessMatrix);
             PrintASCII(asciiMatrix);
-            string val;
+            
             Console.Write("Enter integer: ");
-            val = Console.ReadLine();
+            string val = Console.ReadLine();
+        }
+
+
+        static Bitmap ResizeBMP(byte[] photoBytes)
+        {            
+            ISupportedImageFormat format = new JpegFormat { Quality = 70 };
+            Size size = new Size(150, 0);
+            using (MemoryStream inStream = new MemoryStream(photoBytes))
+            {
+                using (MemoryStream outStream = new MemoryStream())
+                {
+                    // Initialize the ImageFactory using the overload to preserve EXIF metadata.
+                    using (ImageFactory imageFactory = new ImageFactory(preserveExifData: false))
+                    {
+                        // Load, resize, set the format and quality and save an image.
+                        imageFactory.Load(inStream)
+                                    .Resize(size)
+                                    .Save(outStream);                   
+                    }
+                    return new Bitmap(outStream);
+                }
+            }
         }
 
         static int GetAverageRGB(Color c)
@@ -46,7 +80,7 @@ namespace Image_Ascii
             {
                 for (int j = 0; j < asciiMatrix.GetLength(1); j++)
                 {
-                    Console.Write("{0}{0}{0}", asciiMatrix[i, j]);
+                    Console.Write("{0}{0}", asciiMatrix[i, j]);
                 }
                 Console.WriteLine();
             }
